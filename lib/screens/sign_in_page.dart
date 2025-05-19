@@ -4,24 +4,22 @@ import 'package:neomorphic_chat_flutter/Auth/bloc/auth_bloc.dart';
 import 'package:neomorphic_chat_flutter/Auth/bloc/auth_event.dart';
 import 'package:neomorphic_chat_flutter/Auth/bloc/auth_state.dart';
 import 'package:neomorphic_chat_flutter/screens/home_screen.dart';
-import 'package:neomorphic_chat_flutter/screens/sign_in_page.dart';
+import 'package:neomorphic_chat_flutter/screens/register_page.dart';
 import 'package:neomorphic_chat_flutter/utilities/Text_styles.dart';
 import 'package:neomorphic_chat_flutter/utilities/widgets/button_neomorphic.dart';
 import 'package:neomorphic_chat_flutter/utilities/widgets/logo_neomorphic.dart';
 import 'package:neomorphic_chat_flutter/utilities/widgets/textfield_neomorphic.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class SigninPage extends StatefulWidget {
+  const SigninPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<SigninPage> createState() => _SigninPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  
+class _SigninPageState extends State<SigninPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
@@ -36,13 +34,13 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc,AuthState>(
       listener: (context, state) {
-          if (state is AuthStateLoggedIn) {
-            Navigator.of(context).pushAndRemoveUntil(
+        if (state is AuthStateLoggedIn) {
+          Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const HomePage()),
-            (route) => false,
+            (route) => false,  // Remove all previous routes
           );
         }
-        if (state is AuthStateRegistering) {
+        if (state is AuthStateLoggedOut) {
           if (state.exception != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -51,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: const TextStyle(color: Colors.white),
                 ),
                 backgroundColor: Colors.red,
-                duration: const Duration(seconds: 3),
+                duration: const Duration(seconds: 2),
               ),
             );
           }
@@ -76,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   // Logo
                   neomorphicLogo(
                     Icon(
-                      Icons.person_add,
+                      Icons.person,
                       size: 80,
                       color: Colors.blueGrey[800],
                     )
@@ -86,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   
                   // Title
                   Text(
-                    'Create Account',
+                    'Welcome Back',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -100,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   
                   // Subtitle
                   Text(
-                    'Sign up using Email and Password',
+                    'Sign in to continue',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.blueGrey[600],
@@ -110,21 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   
                   const SizedBox(height: 50),
-      
-                  // Name Field
-                  buildNeomorphicTextField(
-                    controller: _nameController,
-                    hintText: 'Name',
-                      prefixIcon: Icons.person_outline,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your Name';
-                      }
-                      return null;
-                    },
-                  ),
                   
-                  const SizedBox(height: 25),
                   // Email Field
                   buildNeomorphicTextField(
                     controller: _emailController,
@@ -133,11 +117,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
-                      }
-                       // Email regex pattern
-                      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                      if (!emailRegex.hasMatch(value)) {
-                        return 'Please enter a valid email address';
                       }
                       return null;
                     },
@@ -163,47 +142,43 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty ) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your password';
-                      } else 
-                      if (value.length < 4) {
-                        return 'Password must be at least 4 characters long';
-                      } else 
-                      if (!value.contains(RegExp(r'[0-9]'))) {
-                        return 'Password must contain at least one digit';
                       }
                       return null;
                     },
                   ),
                   
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
                   
-                  // Register Button
+                  // Sign In Button
                   neomorphicButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        // login
                         context.read<AuthBloc>().add(
-                          AuthEventRegister(
-                            name: _nameController.text,
-                            email: _emailController.text,
-                            password: _passwordController.text,
-                          ),
+                          AuthEventSignIn(
+                            email: _emailController.text, 
+                            password: _passwordController.text
+                          )
                         );
                       }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.person_add, color: Colors.blueGrey[800]),
+                        Icon(Icons.login, color: Colors.blueGrey[800]),
                         const SizedBox(width: 12),
                         Text(
-                          "Sign up",
+                          "Sign In",
                           style: getTextStyle(),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  
+                  const SizedBox(height: 20),
+                  
                   Align(
                     alignment: Alignment.center,
                     child: TextButton(
@@ -211,14 +186,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         // Navigate to SignIn Page
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder:(context) => SigninPage())
+                          MaterialPageRoute(builder:(context) => RegisterPage())
                         );
                       },
                       child: Text(
-                        'Already have an account? Sign in',
+                        'New User? Sign up now',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.blueGrey[600],
+                          color: Colors.blueGrey[300],
                           fontFamily: 'Poppins',
                         ),
                       ),

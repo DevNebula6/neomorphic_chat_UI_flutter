@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neomorphic_chat_flutter/models/onboarding_page_model.dart';
 import 'package:neomorphic_chat_flutter/screens/register_page.dart';
-import 'package:neomorphic_chat_flutter/screens/signin_page.dart';
+import 'package:neomorphic_chat_flutter/screens/sign_in_page.dart';
 import 'package:neomorphic_chat_flutter/utilities/Text_styles.dart';
 import 'package:neomorphic_chat_flutter/utilities/widgets/button_neomorphic.dart';
 import 'package:neomorphic_chat_flutter/utilities/widgets/logo_neomorphic.dart';

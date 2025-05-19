@@ -36,8 +36,8 @@ class _SigninPageState extends State<SigninPage> {
       listener: (context, state) {
         if (state is AuthStateLoggedIn) {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const HomePage()),
-            (route) => false,  // Remove all previous routes
+            MaterialPageRoute(builder: (context) => const ChatPage()),
+            (route) => false, 
           );
         }
         if (state is AuthStateLoggedOut) {

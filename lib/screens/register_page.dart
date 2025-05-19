@@ -38,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
       listener: (context, state) {
           if (state is AuthStateLoggedIn) {
             Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(builder: (context) => const ChatPage()),
             (route) => false,
           );
         }
